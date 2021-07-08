@@ -25,44 +25,42 @@
 
 <script>
 export default {
-  name: 'AddTask',
-  data () {
+  name: "AddTask",
+  data() {
     return {
-      text: '',
-      day: '',  
-      reminder: false
-  }
+      text: "",
+      day: "",
+      reminder: false,
+    };
   },
   methods: {
-    onSubmit (e) {
+    onSubmit(e) {
       e.preventDefault();
-      
+
       if (!this.text) {
-        alert('Please add a task') 
-        return
+        alert("Please add a task");
+        return;
       }
 
       const newTask = {
-        id: Math.floor(Math.random() * 999999),
+        // id: Math.floor(Math.random() * 999999),
         text: this.text,
         day: this.day,
-        reminder: this.reminder
-      }
+        reminder: this.reminder,
+      };
 
-      this.$emit('add-task', newTask)
+      this.$emit("add-task", newTask);
 
-      this.text =''
-      this.day = ''
-      this.reminder = false
-
-      
-    }
-  }
-}
+      this.text = "";
+      this.day = "";
+      this.reminder = false;
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .add-form {
+.add-form {
   margin-bottom: 40px;
 }
 .form-control {
@@ -90,5 +88,4 @@ export default {
   flex: 2;
   height: 20px;
 }
-
 </style>
