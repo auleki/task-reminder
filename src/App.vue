@@ -1,76 +1,82 @@
 <template>
-<div class="container">
-  <Header title="Tasks Tracker" />
-  <Tasks @delete-task="deleteTask" :tasks="tasks" />
-</div>
+  <div class="container">
+    <Header
+      :showAddTask="showAddTask"
+      @toggle-add-task="toggleAddTask"
+      title="TF"
+    />
+    <div v-show="showAddTask">
+      <AddTask @add-task="addTask" />
+    </div>
+    <Tasks
+      @delete-task="deleteTask"
+      @toggle-reminder="toggleReminder"
+      :tasks="tasks"
+    />
+  </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import Tasks from './components/Tasks.vue'
+import Header from "./components/Header.vue";
+import Tasks from "./components/Tasks.vue";
+import AddTask from "./components/AddTask.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
-    Tasks
+    Tasks,
+    AddTask,
   },
-  data () {
+  data() {
     return {
-      tasks: []
-    }
+      tasks: [],
+      showAddTask: false,
+    };
   },
   methods: {
+    addTask(task) {
+      this.tasks = [...this.tasks, task];
+    },
+    toggleAddTask() {
+      this.showAddTask = !this.showAddTask;
+    },
     deleteTask(id) {
-      this.tasks = this.tasks.filter((task) => task.id !== id)
-    }
+      if (confirm("Sure you want to delete?")) {
+        this.tasks = this.tasks.filter((task) => task.id !== id);
+      }
+    },
+    toggleReminder(id) {
+      this.tasks = this.tasks.map((task) =>
+        task.id === id ? { ...task, reminder: !task.reminder } : task
+      );
+    },
+    async fetchTasks() {
+      const res = await fetch("api/tasks");
+      const data = await res.json();
+      return data;
+    },
+    async fetchTask(id) {
+      const res = await fetch(`api/tasks/${id}`);
+      const data = await res.json();
+      return data;
+    },
   },
-  created () {
-    this.tasks = [
-      {
-        id: 1,
-        text: "Doctor's appointment",
-        day: 'June 6th at 3pm',
-        reminder: false
-      },
-      {
-        id: 2,
-        text: "Wogorowogoro with babe",
-        day: 'June 29th at 9pm',
-        reminder: true
-      },
-      {
-        id: 3,
-        text: "Call Ntongha",
-        day: 'June 30th at 1pm',
-        reminder: true
-      },
-      {
-        id: 4,
-        text: "Make a new application",
-        day: 'July 6th at 10pm',
-        reminder: true
-      },
-      {
-        id: 5,
-        text: "Give tailor new cloth",
-        day: 'July 14th at 3pm',
-        reminder: false
-      }      
-    ]
-  }
-  }
+  async created() {
+    this.tasks = await this.fetchTasks();
+  },
+};
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .container {
   max-width: 500px;
